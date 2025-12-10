@@ -11,31 +11,29 @@ class Logger private constructor(private val config: Config) {
     private val _level: Level get() = getLevel() ?: config.level
     private val _stackIndex = STACK_INDEX + (getStackOffset() ?: config.stackOffset)
 
-    private fun getAnsiColor(level: Level): AnsiColor {
-        return when (level) {
-            Level.ERROR -> {
-                AnsiColor.RED
-            }
+    private fun getAnsiColor(level: Level): AnsiColor = when (level) {
+        Level.ERROR -> {
+            AnsiColor.RED
+        }
 
-            Level.WARN -> {
-                AnsiColor.YELLOW
-            }
+        Level.WARN -> {
+            AnsiColor.YELLOW
+        }
 
-            Level.INFO -> {
-                AnsiColor.GREEN
-            }
+        Level.INFO -> {
+            AnsiColor.GREEN
+        }
 
-            Level.DEBUG -> {
-                AnsiColor.BLUE
-            }
+        Level.DEBUG -> {
+            AnsiColor.BLUE
+        }
 
-            Level.TRACE -> {
-                AnsiColor.CYAN
-            }
+        Level.TRACE -> {
+            AnsiColor.CYAN
+        }
 
-            Level.OFF -> {
-                AnsiColor.RED
-            }
+        Level.OFF -> {
+            AnsiColor.RED
         }
     }
 
@@ -192,31 +190,23 @@ class Logger private constructor(private val config: Config) {
             Builder().build()
         }
 
-        private fun getProperty(key: String): String? {
-            return System.getProperty(key)
-        }
+        private fun getProperty(key: String): String? = System.getProperty(key)
 
         private fun setProperty(key: String, value: String) {
             System.setProperty(key, value)
         }
 
-        fun getInstance(): Logger {
-            return _instance
-        }
+        fun getInstance(): Logger = _instance
 
-        fun getLevel(): Level? {
-            return getProperty(DEFAULT_LOG_LEVEL_KEY)?.let {
-                Level.fromValue(it)
-            }
+        fun getLevel(): Level? = getProperty(DEFAULT_LOG_LEVEL_KEY)?.let {
+            Level.fromValue(it)
         }
 
         fun setLevel(level: Level) {
             setProperty(DEFAULT_LOG_LEVEL_KEY, level.value)
         }
 
-        fun getStackOffset(): Int? {
-            return getProperty(DEFAULT_LOG_STACK_OFFSET_KEY)?.toInt()
-        }
+        fun getStackOffset(): Int? = getProperty(DEFAULT_LOG_STACK_OFFSET_KEY)?.toInt()
 
         fun setStackOffset(stackOffset: Int) {
             setProperty(DEFAULT_LOG_STACK_OFFSET_KEY, stackOffset.toString())
@@ -239,33 +229,27 @@ class Logger private constructor(private val config: Config) {
         DEBUG(4, "DEBUG"),
         TRACE(5, "TRACE");
 
-        override fun toString(): String {
-            return value
-        }
+        override fun toString(): String = value
 
         companion object {
-            fun fromCode(code: Int): Level {
-                return when (code) {
-                    OFF.code -> OFF
-                    ERROR.code -> ERROR
-                    WARN.code -> WARN
-                    INFO.code -> INFO
-                    DEBUG.code -> DEBUG
-                    TRACE.code -> TRACE
-                    else -> throw IllegalArgumentException("Level code [$code] not recognized.")
-                }
+            fun fromCode(code: Int): Level = when (code) {
+                OFF.code -> OFF
+                ERROR.code -> ERROR
+                WARN.code -> WARN
+                INFO.code -> INFO
+                DEBUG.code -> DEBUG
+                TRACE.code -> TRACE
+                else -> throw IllegalArgumentException("Level code [$code] not recognized.")
             }
 
-            fun fromValue(value: String): Level {
-                return when (value.uppercase()) {
-                    OFF.value -> OFF
-                    ERROR.value -> ERROR
-                    WARN.value -> WARN
-                    INFO.value -> INFO
-                    DEBUG.value -> DEBUG
-                    TRACE.value -> TRACE
-                    else -> throw IllegalArgumentException("Level value [$value] not recognized.")
-                }
+            fun fromValue(value: String): Level = when (value.uppercase()) {
+                OFF.value -> OFF
+                ERROR.value -> ERROR
+                WARN.value -> WARN
+                INFO.value -> INFO
+                DEBUG.value -> DEBUG
+                TRACE.value -> TRACE
+                else -> throw IllegalArgumentException("Level value [$value] not recognized.")
             }
         }
     }
@@ -284,14 +268,12 @@ class Logger private constructor(private val config: Config) {
             return this
         }
 
-        fun build(): Logger {
-            return Logger(
-                Config(
-                    level = level,
-                    stackOffset = stackOffset
-                )
+        fun build(): Logger = Logger(
+            Config(
+                level = level,
+                stackOffset = stackOffset
             )
-        }
+        )
     }
 
     object ThrowableUtils {
@@ -370,9 +352,7 @@ class Logger private constructor(private val config: Config) {
     object Formatter {
         private val _objectMapper = Jackson.objectMapper
 
-        private fun anyToJson(value: Any): String {
-            return _objectMapper.writeValueAsString(value)
-        }
+        private fun anyToJson(value: Any): String = _objectMapper.writeValueAsString(value)
 
         private fun mapToString(value: Map<*, *>): String {
             val map = value.mapValues { (_, v) -> allToString(v) }
@@ -384,50 +364,42 @@ class Logger private constructor(private val config: Config) {
             return list.toTypedArray().contentToString()
         }
 
-        private fun arrayToString(value: Array<*>): String {
-            return iterableToString(value.toList())
-        }
+        private fun arrayToString(value: Array<*>): String = iterableToString(value.toList())
 
-        private fun sequenceToString(value: Sequence<*>): String {
-            return iterableToString(value.toList())
-        }
+        private fun sequenceToString(value: Sequence<*>): String = iterableToString(value.toList())
 
-        private fun allToString(value: Any?): String {
-            return when (value) {
-                is Array<*> -> {
-                    arrayToString(value)
-                }
+        private fun allToString(value: Any?): String = when (value) {
+            is Array<*> -> {
+                arrayToString(value)
+            }
 
-                is Iterable<*> -> {
-                    iterableToString(value)
-                }
+            is Iterable<*> -> {
+                iterableToString(value)
+            }
 
-                is Sequence<*> -> {
-                    sequenceToString(value)
-                }
+            is Sequence<*> -> {
+                sequenceToString(value)
+            }
 
-                is Map<*, *> -> {
-                    mapToString(value)
-                }
+            is Map<*, *> -> {
+                mapToString(value)
+            }
 
-                is Throwable -> {
-                    ThrowableUtils.getFullStackTrace(value)
-                }
+            is Throwable -> {
+                ThrowableUtils.getFullStackTrace(value)
+            }
 
-                is Boolean, is Byte, is Char, is Double, is Float, is Int, is Long, is Short -> {
-                    value.toString()
-                }
+            is Boolean, is Byte, is Char, is Double, is Float, is Int, is Long, is Short -> {
+                value.toString()
+            }
 
-                else -> {
-                    value?.let {
-                        anyToJson(it)
-                    } ?: "null"
-                }
+            else -> {
+                value?.let {
+                    anyToJson(it)
+                } ?: "null"
             }
         }
 
-        fun anyToString(value: Any?): String {
-            return allToString(value)
-        }
+        fun anyToString(value: Any?): String = allToString(value)
     }
 }

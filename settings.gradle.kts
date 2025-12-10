@@ -27,5 +27,5 @@ rootProject.name = "log-kotlin"
 include(":logger-kotlin")
 project(":logger-kotlin").name = "logger-kotlin"
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
