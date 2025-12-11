@@ -350,9 +350,9 @@ class Logger private constructor(private val config: Config) {
     }
 
     object Formatter {
-        private val _objectMapper = Jackson.objectMapper
+        private val _jsonMapper = Jackson.jsonMapper
 
-        private fun anyToJson(value: Any): String = _objectMapper.writeValueAsString(value)
+        private fun anyToJson(value: Any): String = _jsonMapper.writeValueAsString(value)
 
         private fun mapToString(value: Map<*, *>): String {
             val map = value.mapValues { (_, v) -> allToString(v) }
